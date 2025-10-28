@@ -1,0 +1,3 @@
+apps:
+  - name : 'simustream-shopify'
+    script: 'index.js'

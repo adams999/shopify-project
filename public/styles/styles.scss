@@ -1,0 +1,109 @@
+@font-face {
+  font-family: sofia-pro;
+  src: url("/assets/fonts/SofiaProSemiBold.ttf") format("opentype");
+}
+
+@font-face {
+  font-family: sofia-pro-medium;
+  src: url("/assets/fonts/SofiaProMedium.ttf") format("opentype");
+}
+
+@font-face {
+  font-family: sofia-pro-regular;
+  src: url("/assets/fonts/SofiaProRegular.ttf") format("opentype");
+}
+
+.bg {
+  background: white !important
+}
+
+.card {
+  height: 90px;
+  position: relative;
+  align-items: center;
+  display: flex;
+  font-family: sofia-pro-medium, sans-serif !important;
+}
+
+.card-publishing {
+  height: 90px;
+  position: relative;
+  font-family: sofia-pro-medium, sans-serif !important;
+}
+
+.background-color {
+  background-color: #f9fafb !important;
+  height: 100vh;
+}
+
+.shadow-box {
+  box-shadow: 0px 0px 15px 0px rgba(30, 43, 90, 0.07) !important;
+}
+
+.border-style {
+  border-radius: 6px !important;
+}
+
+.container-set {
+  top: 60px;
+  position: relative;
+  padding-left: 80px;
+  padding-right: 80px;
+}
+
+.bold {
+  font-weight: 600;
+  font-family: sofia-pro, sans-serif !important;
+
+}
+
+.description-text {
+  color: #798192;
+  font-family: sofia-pro-medium, sans-serif !important;
+
+}
+
+.border-solid {
+  padding: 15px;
+  border: 1px solid rgba(121, 129, 146, 0.2);
+  border-radius: 3px !important;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.mt-0 {
+  margin-top: 0 !important;
+}
+
+.btn-primary {
+  background-color: #5579F3 !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  font-size: 13px;
+  font-weight: 600 !important;
+
+  &:hover {
+    color: white !important;
+    background-color: #5579F3 !important;
+  }
+
+  &:focus {
+    outline: none !important;
+    border: 0 !important;
+    border-color: none !important;
+    outline: 0;
+    box-shadow: none !important;
+  }
+}
+
+.product-listing {
+  margin-top: 40px;
+
+  .publish-head {
+    margin-top: 10px;
+  }
+}
