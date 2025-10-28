@@ -1,4 +1,4 @@
-# Simustream Shopify Backend
+# Shopify Api/BE
 
 Backend API para la integración de Shopify con Simustream. Este servicio maneja webhooks de Shopify y sincroniza productos entre la tienda Shopify y la plataforma Simustream.
 
@@ -218,3 +218,4 @@ Verifica:
 ## Licencia
 
 ISC
+
