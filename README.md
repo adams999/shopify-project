@@ -1,45 +1,220 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+# Simustream Shopify Backend
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+Backend API para la integración de Shopify con Simustream. Este servicio maneja webhooks de Shopify y sincroniza productos entre la tienda Shopify y la plataforma Simustream.
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+## Descripción
 
----
+Este proyecto es un servidor Express.js que actúa como intermediario entre Shopify y la API de Simustream. Gestiona automáticamente la sincronización de productos mediante webhooks cuando se agregan, actualizan o eliminan productos en la tienda Shopify.
 
-## Edit a file
+## Características
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
+- Servidor HTTPS con certificados SSL
+- Soporte CORS para solicitudes cross-origin
+- Webhooks de Shopify para sincronización automática:
+  - Agregar productos
+  - Actualizar productos
+  - Eliminar productos
+- Integración con Stripe para pagos
+- Autenticación OAuth de Shopify
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+## Requisitos Previos
 
----
+- Node.js (v12 o superior)
+- npm o yarn
+- Certificados SSL (Let's Encrypt)
+- Cuenta de Shopify con acceso a API
+- Cuenta de Stripe
+- Acceso a la API de Simustream
 
-## Create a file
+## Instalación
 
-Next, you’ll add a new file to this repository.
+1. Clona el repositorio:
+```bash
+git clone <repository-url>
+cd simustream-strut-shopify
+```
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
+2. Instala las dependencias:
+```bash
+npm install
+```
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
+3. Configura los certificados SSL:
+   - Asegúrate de tener los certificados en `/etc/letsencrypt/live/shopify.bebettertest.net/`
+   - Los archivos necesarios son: `privkey.pem`, `cert.pem`, `chain.pem`
 
----
+4. Configura las variables de entorno:
+```bash
+cp config/settings-template.json config/settings.json
+```
 
-## Clone a repository
+5. Edita `config/settings.json` con tus credenciales:
+```json
+{
+    "base_path": "https://api-v1.simustream.com",
+    "redirect_dashboard_url": "https://simustream.com",
+    "store_forwarding_address": "https://store.simustream.com",
+    "stripe_secret_key": "YOUR_STRIPE_LIVE_SECRET_KEY",
+    "stripe_secret_test_key": "YOUR_STRIPE_TEST_SECRET_KEY",
+    "shopify_secret_key": "YOUR_SHOPIFY_SECRET_KEY",
+    "shopify_api_key": "YOUR_SHOPIFY_API_KEY",
+    "webhook_address": "https://store.simustream.com"
+}
+```
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
+## Uso
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
+### Desarrollo
 
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+```bash
+npm start
+```
+
+El servidor se iniciará en:
+- Puerto 80 (HTTP)
+- Puerto 443 (HTTPS)
+
+### Producción con PM2
+
+El proyecto incluye configuración para PM2:
+
+```bash
+pm2 start pm2_processes.yml
+pm2 save
+pm2 startup
+```
+
+## Estructura del Proyecto
+
+```
+simustream-strut-shopify/
+├── config/
+│   ├── settings.json           # Configuración del proyecto (no incluido en git)
+│   └── settings-template.json  # Plantilla de configuración
+├── controllers/
+│   └── v1/
+│       ├── app.js              # Controladores de la aplicación
+│       └── shopify.js          # Controladores de Shopify
+├── lib/
+│   └── middleware/
+│       └── common.js           # Funciones comunes
+├── public/                     # Archivos estáticos
+├── index.js                    # Punto de entrada principal
+├── store.js                    # Lógica del store
+├── pm2_processes.yml           # Configuración de PM2
+└── package.json                # Dependencias del proyecto
+```
+
+## Endpoints API
+
+### Webhooks
+
+#### POST /add-product-webhook
+Webhook para agregar un nuevo producto desde Shopify.
+
+**Headers:**
+- `x-shopify-shop-domain`: Dominio de la tienda Shopify
+
+**Body:**
+```json
+{
+  "product_listing": {
+    // Datos del producto de Shopify
+  }
+}
+```
+
+#### POST /update-product-webhook
+Webhook para actualizar un producto existente.
+
+**Headers:**
+- `x-shopify-shop-domain`: Dominio de la tienda Shopify
+
+**Body:**
+```json
+{
+  "product_listing": {
+    // Datos actualizados del producto
+  }
+}
+```
+
+#### POST /delete-product-webhook
+Webhook para eliminar un producto de la tienda.
+
+**Headers:**
+- `x-shopify-shop-domain`: Dominio de la tienda Shopify
+
+**Body:**
+```json
+{
+  "product_listing": {
+    "product_id": "ID_del_producto"
+  }
+}
+```
+
+### Otros Endpoints
+
+Ver archivos en `controllers/v1/` para endpoints adicionales relacionados con:
+- Autenticación OAuth de Shopify
+- Gestión de aplicaciones
+- Operaciones específicas de la tienda
+
+## Configuración de Webhooks en Shopify
+
+1. Accede al panel de administración de Shopify
+2. Ve a Settings > Notifications > Webhooks
+3. Agrega los siguientes webhooks:
+   - **Product listing added**: `https://tu-dominio.com/add-product-webhook`
+   - **Product listing updated**: `https://tu-dominio.com/update-product-webhook`
+   - **Product listing removed**: `https://tu-dominio.com/delete-product-webhook`
+
+## Dependencias Principales
+
+- **express**: Framework web para Node.js
+- **axios**: Cliente HTTP
+- **body-parser**: Middleware para parsear cuerpos de solicitudes
+- **dotenv**: Gestión de variables de entorno
+- **stripe**: SDK de Stripe para pagos
+- **@shopify/polaris**: Componentes UI de Shopify
+- **request-promise**: Cliente HTTP con promesas
+
+## Seguridad
+
+- Usa HTTPS para todas las comunicaciones
+- Los certificados SSL se actualizan automáticamente con Let's Encrypt
+- Las credenciales sensibles se almacenan en `config/settings.json` (no incluido en git)
+- CORS configurado para permitir solicitudes desde dominios específicos
+
+## Solución de Problemas
+
+### Error de certificados SSL
+Si recibes errores relacionados con certificados SSL, verifica:
+1. Los certificados existen en la ruta especificada
+2. Los permisos de lectura son correctos
+3. Los certificados no han expirado
+
+### Error de conexión con API de Simustream
+Verifica:
+1. La URL de `base_path` en `settings.json` es correcta
+2. El servidor de Simustream está accesible
+3. Las credenciales de autenticación son válidas
+
+### Webhooks no funcionan
+Verifica:
+1. Los webhooks están correctamente configurados en Shopify
+2. La URL del webhook es accesible públicamente
+3. Los headers `x-shopify-shop-domain` se están enviando correctamente
+
+## Contribuir
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## Licencia
+
+ISC
